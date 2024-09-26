@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('backg.jpg'); 
+            background-size: cover; 
+            background-repeat: no-repeat; 
+            background-position: center; 
+            font-family: 'Arial', sans-serif;
+            padding: 30px;
+        }
+
+        fieldset {
+            position: relative; 
+            background-color: #ffffff; 
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden; 
+        }
+
+        fieldset::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('backg.jpg'); 
+            background-size: cover;
+            opacity: 0.5; 
+            z-index: 0; 
+        }
+
+        legend {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            position: relative; 
+            z-index: 1; 
+        }
+
+        .table {
+            margin-top: 20px;
+            background-color: #ffffff; 
+            position: relative;
+            z-index: 1; 
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        th, td {
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            position: relative; 
+            z-index: 1; 
+        }
+
+        @media (max-width: 768px) {
+            fieldset {
+                padding: 15px;
+            }
+
+            legend {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <fieldset>
+        <legend>Grocery List</legend>
+        <div class="input-group">
+            <select name="" id="dropdown" class="form-control">
+                <option value="">Select Item</option>
+            </select>
+            <input type="text" id="Quantity" placeholder="Enter Quantity" class="form-control">
+            <div class="input-group-append">
+                <button class="btn btn-primary" onclick="addItem()">ADD Item</button>
+            </div>
+        </div>
+        <table class="table table-bordered" id="tableItem">
+            <thead>
+                <tr>
+                    <th>Sr No</th>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody id="selectedItemRecord"></tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                    <td class="text-center"><strong id="tot">0.00</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </fieldset>
+
+    <script>
+        var itemList = [
+            { itemName: "Cooking Oil", price: 120 },
+            { itemName: "Rice", price: 60 },
+            { itemName: "Dal", price: 100 },
+            { itemName: "Sugar", price: 45 },
+            { itemName: "Aata", price: 40 },
+            { itemName: "Turmeric", price: 200 },
+            { itemName: "Coffee", price: 2500 },
+            { itemName: "Dry Fruit Mix", price: 850 }
+        ];
+
+        var selectedItems = [];
+
+        for (var index = 0; index < itemList.length; index++) {
+            var itemOption = document.createElement("option");
+            itemOption.innerText = itemList[index].itemName + " - (" + itemList[index].price + ")";
+            itemOption.value = itemList[index].itemName;
+            document.getElementById("dropdown").appendChild(itemOption);
+        }
+
+        function addItem() {
+            const selectedItem = document.getElementById("dropdown").value;
+            const quantity = document.getElementById("Quantity").value;
+
+            if (!selectedItem || quantity <= 0) {
+                alert("Please select an item and enter a valid quantity.");
+                return;
+            }
+
+            const itemRecord = itemList.find(m => m.itemName == selectedItem);
+            const newObj = {
+                itemName: selectedItem,
+                price: itemRecord.price,
+                quantity: quantity,
+                amount: itemRecord.price * quantity
+            };
+            selectedItems.push(newObj);
+            printData();
+        }
+
+        function printData() {
+            let total = 0;
+            document.getElementById("selectedItemRecord").innerText = '';
+            for (let index = 0; index < selectedItems.length; index++) {
+                const myTr = document.createElement("tr");
+
+                const srNoTd = document.createElement('td');
+                srNoTd.innerText = index + 1;
+                myTr.append(srNoTd);
+
+                const itemNameTd = document.createElement('td');
+                itemNameTd.innerText = selectedItems[index].itemName + ' - ' + selectedItems[index].price;
+                myTr.append(itemNameTd);
+
+                const quantityTd = document.createElement('td');
+                quantityTd.innerText = selectedItems[index].quantity;
+                myTr.append(quantityTd);
+
+                const amountTd = document.createElement('td');
+                amountTd.innerText = selectedItems[index].amount.toFixed(2);
+                myTr.append(amountTd);
+
+                document.getElementById("selectedItemRecord").append(myTr);
+                total += selectedItems[index].amount;
+            }
+            document.getElementById("tot").innerText = total.toFixed(2);
+        }
+    </script>
+</body>
+
+</html>
